@@ -1,6 +1,7 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type {
   HabitEntry,
+  HabitState,
   WorkoutPlan,
   Exercise,
   WorkoutSession,
@@ -14,6 +15,7 @@ import type {
 // Append versions with .upgrade(transaction => ...) when changing persisted data.
 // Never edit an already shipped schema or delete a database to migrate it.
 export class JerkLogDB extends Dexie {
+  habitState!: EntityTable<HabitState, 'id'>;
   habitEntries!: EntityTable<HabitEntry, 'id'>;
   workoutPlans!: EntityTable<WorkoutPlan, 'id'>;
   exercises!: EntityTable<Exercise, 'id'>;
@@ -36,6 +38,10 @@ export class JerkLogDB extends Dexie {
       mealEntries: 'id, date, foodId',
       nutritionGoals: 'id',
       settings: 'id',
+    });
+    this.version(2).stores({
+      habitEntries: 'id, occurredAt, createdAt',
+      habitState: 'id',
     });
   }
 }
