@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import { safeMessage } from './errors';
+import { useState, useRef, useEffect } from 'react';
 
 export function useAction() {
+  const lock = useRef(false);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    if (!message || failed) return;
+    const timer = setTimeout(() => setMessage(''), 6000);
+    return () => clearTimeout(timer);
+  }, [message, failed]);
   async function run(action: () => Promise<unknown>, success: string) {
+    if (lock.current) return false;
+    lock.current = true;
     setBusy(true);
     setMessage('');
     setFailed(false);
@@ -14,14 +23,10 @@ export function useAction() {
       return true;
     } catch (error) {
       setFailed(true);
-      // Known validation errors contain no entered values; storage errors stay generic.
-      setMessage(
-        error instanceof Error && error.name === 'Error'
-          ? error.message
-          : '本地存储操作失败，请检查浏览器存储权限或剩余空间后重试。',
-      );
+      setMessage(safeMessage(error));
       return false;
     } finally {
+      lock.current = false;
       setBusy(false);
     }
   }
@@ -30,10 +35,25 @@ export function useAction() {
     busy,
     feedback: (
       <p
-        className={failed ? 'feedback error' : 'feedback'}
+        className={
+          message
+            ? failed
+              ? 'feedback toast error'
+              : 'feedback toast'
+            : 'feedback'
+        }
         role={failed ? 'alert' : 'status'}
       >
         {message}
+        {message && (
+          <button
+            className="toast-dismiss"
+            aria-label="关闭提示"
+            onClick={() => setMessage('')}
+          >
+            关闭
+          </button>
+        )}
       </p>
     ),
   };
