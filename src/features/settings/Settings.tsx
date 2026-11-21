@@ -73,7 +73,9 @@ export default function SettingsPage() {
         <section className="card">
           <span className="tag">仅本地存储</span>
           <h2>隐私，默认在本机。</h2>
-          <p>习惯记录与偏好仅保存在当前浏览器 IndexedDB。没有后台同步。</p>
+          <p>
+            习惯、训练记录与偏好仅保存在当前浏览器 IndexedDB。没有后台同步。
+          </p>
           <p className="muted">
             无需账号，没有后台同步，不接入广告、分析或错误上报
             SDK。本地存储不等于加密；清除浏览器数据可能导致所有记录丢失；备份功能尚未提供。
@@ -84,7 +86,7 @@ export default function SettingsPage() {
           </p>
         </section>
       </div>
-      <p className="muted version">JerkLog · v0.1 / Phase 1A · Habits</p>
+      <p className="muted version">JerkLog · v0.1 / Phase 1B · Training Lab</p>
     </>
   );
 }

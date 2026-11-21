@@ -54,7 +54,7 @@ export default function Dashboard() {
         </>
       )}
       <div className="pending-modules">
-        <Link to="/training">Training · 尚未开放业务功能</Link>
+        <Link to="/training">Training · 计划与训练日志</Link>
         <Link to="/nutrition">Nutrition · 尚未开放业务功能</Link>
       </div>
     </>

@@ -1,23 +1,31 @@
-# Architecture / Phase 1A
+# Architecture / Phase 1B
 
-The five-route shell, CSS tokens, mobile navigation and schema v1 are inherited from Phase 0. Training and Nutrition files remain unchanged placeholders. Habits now owns repository writes, live-query reading, history pagination, calendar and insights components. Dashboard shares read-only insights/history; all totals come from actual records.
+The existing React/TypeScript/Vite shell, HashRouter, UI tokens, theme settings, useAction feedback, safe errors and local-calendar utilities are reused. Habits business logic is unchanged from Phase 1A. Nutrition is unchanged and remains a placeholder. Training owns catalog, metrics, read queries, a transactional repository and separate exercises/plans/sessions UI folders. No new framework or runtime dependency was added.
 
-## Persistence and concurrency
+## Schema v3
 
-Schema v2 extends v1 with the habitEntries.createdAt index and a habitState store. The control row holds the last quick-record timestamp and one undo command containing before/after record snapshots. No records are seeded or cleared. Tests open a genuine v1 database and verify its migration. Future migrations must append versions and test preservation; old schema code cannot downgrade a v2 database.
+Versions 1 and 2 remain intact. Version 3 adds planDays (`id`, `planId`, compound planId/order) and trainingMeta (`id`); extends exercise, plan and session indexes; and adds explicit training creation/update timestamps and revisions. No Habits, habitState, settings or Nutrition table is written by the upgrade. Dexie executes the upgrade atomically; failure leaves the old version and data intact. Tests use an actual populated v2 database and a deliberately failed migration.
 
-All writes include habitEntries and habitState in one read-write transaction, so a failed undo-journal write also rolls back the record. Quick adds are serialized across database connections and persist their 1500ms guard. Backfill dedup compares the exact event timestamp among entries created in that interval. Manual entries with different occurrence times remain independent.
+Legacy plan day strings are preserved as named, initially empty rest days: the old schema contained no exercise scheduling detail, so users can edit them into training days rather than inventing old programming. Legacy session/set names are captured from the currently available legacy catalog/plan; unavailable names are explicitly marked. Old sessions with endedAt become completed, those without become paused. Old numeric kg values (including 0) remain numeric weighted sets because their original intent cannot be inferred. Missing exercise/set timestamps use an internal epoch sentinel and are not presented as measured workout dates. Old completed-session duration reflects its available start/end; missing historical pauses cannot be reconstructed. These rules preserve existing facts without claiming unrecorded history.
 
-Edit/delete compare the displayed record with the current stored version. Undo compares both the expected journal and current record before restoring or removing it. The journal survives page navigation/reload and only the latest create/edit/delete is reversible. Undo consumes the command, with no redo. Deleting a record therefore retains its before-snapshot locally until undo or a subsequent write replaces that command.
+The public exercise catalog has stable builtin IDs and an idempotent catalogVersion marker. Seeding runs when entering Training and never creates private workout records. Existing same-ID data is not overwritten.
 
-## Dates and presentation
+## Plans and snapshots
 
-Events are canonical UTC ISO timestamps; local day keys are computed at display time. Week boundaries start Monday; 7/30-day windows include today and the preceding 6/29 local dates, excluding future events. Date setters handle DST and year/month rollover. Input validation round-trips local fields to reject normalized invalid dates and nonexistent DST times; repeated hours have earlier/later selection. Unchanged edits preserve the original timestamp precision.
+WorkoutPlan retains ordered day IDs, name, goal and archive flag. PlanDay holds an ordered array of planned exercise IDs, sets, rep range and notes, and is either training or rest. Templates are independent drafts copied before save; duplicated plans get new plan/day/exercise-row IDs. Deleting plans cascades only to their current planDays. Referenced custom exercises must be removed from plans before catalog deletion; history is rendered from snapshots.
 
-A timer and focus/visibility events refresh date-sensitive displays. History shows 20 records per page. Trend has an accessible table and calendar buttons include date/count text and selected/current-day states. Empty/loading/read-failure states are distinct. All records are currently loaded for local aggregation; large-history performance has not been qualified.
+Starting a session captures plan/day names and planned exercise names/targets/notes. Ad-hoc exercises are snapshotted when first logged. Each set also retains its exercise name. Editing or deleting a source plan/exercise cannot rewrite already started/completed session context.
 
-## Shared infrastructure
+## Session transitions and writes
 
-UserError contains only fixed, reviewed validation messages; safeMessage hides other exception text. useAction provides synchronous in-flight locking, busy state, success/error feedback and dismissible Toasts. Theme/humor preferences use transactional updates. These primitives, date utilities, schema migration patterns and CI can support later modules without sharing habit-derived health calculations.
+A session is active, paused or completed. Activity intervals persist start/end instants and exclude pauses from effective duration. New sessions require no other unfinished session. Empty sessions can be abandoned; at least one completed set is required to finish. Completed sessions are read-only in the current UI.
 
-Unit tests cover real fake-indexeddb transactions and migration, concurrent connections, stale writes/undo, failures and local-calendar edges. Existing Phase 0 tests remain as regressions with schema/UI expectations updated for the new behavior. Browser tests cover real Chrome desktop/mobile interactions, private-data request guards, failure injection and live midnight/month rollover. CI runs the required four quality checks with read-only permissions, without deployment.
+Repository writes run read-write transactions over Training tables only. Numeric and text validation precede persistence. Revision checks reject stale edits, deletes and state transitions. Stable set IDs and a persisted 1500ms identical-set signature guard reject accidental duplicates; rapid plan copies have a similar guard. Failed control writes roll back their set/session changes. Multi-connection tests verify start/dedup serialization.
+
+The UI accepts kg with up to three decimals, storing kg and integer grams. Weighted volume sums integer grams × integer repetitions then divides by 1000; bodyweight/loadless loads are null and excluded. There is no pounds conversion or guessed body mass. Volume is descriptive only. RPE and RIR are optional and mutually exclusive.
+
+## Reading and dates
+
+Training read queries are separated and schema-index tested. Read/seed failures show usable errors instead of fabricated empty success. Weekly counts use completion timestamps from local Monday midnight through now; display uses local dates but persistence uses UTC instants. Existing clock/focus refresh behavior is reused. No Habits data enters Training calculations.
+
+Plan/history screens paginate or scroll where appropriate; current implementation loads local collections for aggregation and has not been performance-qualified for large histories. Browser tests cover the task's full acceptance flow in desktop and mobile viewports, both themes/copy modes, private request assertions and a Habits regression. System security tools are not disabled.
