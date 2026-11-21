@@ -99,7 +99,7 @@ function Shell() {
           </span>
           <strong>私人空间</strong>
           <p>无需登录 · 仅本地存储</p>
-          <span className="muted">v0.1 / Phase 0</span>
+          <span className="muted">v0.1 / Phase 1B</span>
         </div>
       </aside>
       <div className="workspace">

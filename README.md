@@ -1,12 +1,12 @@
 # JerkLog
 
-Habits · Training · Nutrition. A privacy-first, local-first app for adults.
+Habits · Training · Nutrition. A privacy-first, local-first app for adult self-management.
 
-**Phase 0: project foundation only.** Business recording features are not implemented in this branch. [简体中文](README.zh-CN.md)
+**Phase 1B: Training Lab**, retaining Phase 1A Habits. Nutrition remains a placeholder. [简体中文](README.zh-CN.md)
 
 ## Development
 
-Use Node.js >=22.18 and npm (CI uses Node 22.18.0).
+Node.js >=22.18 and npm; CI uses Node 22.18.0.
 
 ```sh
 npm ci
@@ -18,44 +18,20 @@ npm run build
 npm run preview
 ```
 
-Optional browser verification requires installed Google Chrome; run `npm run build` then `npm run test:e2e`. The wrapper owns a local Vite preview and tests desktop/mobile viewports. This is not physical mobile or Safari verification.
+After building, `npm run test:e2e` uses installed Google Chrome with desktop/mobile viewports and owns a local preview on port 4173.
 
-## Included
+## Training Lab
 
-React + strict TypeScript + Vite, five HashRouter pages, desktop sidebar/mobile navigation, dark/light/system themes, CSS tokens, a Chinese copy catalog and humor-mode extension field. The three domain pages show explicit placeholders with disabled actions. Dashboard statistics use an em dash, not fabricated numbers. Only theme preferences are written to IndexedDB.
+- Offline exercise catalog with idempotent seeding, search/filter and custom exercise CRUD.
+- Editable full-body, upper/lower, push-pull-legs and four-day split templates; arbitrary named training/rest days, ordered exercises, planned sets and rep ranges. Plans support duplicate, archive/restore and confirmed deletion.
+- Planned/ad-hoc sessions, editable/deletable sets, kg or explicit bodyweight/loadless modes, optional RPE/RIR and notes, persistent pause/resume and completion timestamps.
+- Real weekly completion counts, latest session, paged history, active duration and descriptive logged volume. Exercise and plan snapshots preserve history through later catalog/plan changes.
+- Reused dark/light themes, humorous/serious copy, local validation/errors and keyboard navigation. Completed sessions are read-only in this phase; correct sets before finishing.
 
-Dexie schema v1 declares the nine planned stores without seeding personal data. Existing records are never cleared. Vitest tests schema initialization, preference persistence/rollback and theme resolution. GitHub Actions runs clean installation, lint, typecheck, tests and build with read-only permissions; it does not deploy or publish.
+Input/display units are kg (three decimals). Integer grams support volume arithmetic. Bodyweight/loadless records have null load and are excluded from weighted volume; no body mass is guessed. Volume is not a comprehensive measure of training stimulus. Training is independent of Habits and does not infer health, recovery or calories from private habit records.
 
-## Structure
+Schema v3 adds planDays/trainingMeta and forward-migrates training fields. No Habits, habitState, settings or Nutrition records are modified by migration. Tests demonstrate real v2 preservation and failed-upgrade rollback. See [architecture](docs/ARCHITECTURE.md), [privacy](docs/PRIVACY.md), [acceptance report](docs/ACCEPTANCE_PHASE_1B.md) and [task](JERKLOG_PHASE_1B_CODEX.md).
 
-```text
-.github/workflows/ci.yml
-src/
-  app/                 # shell, routes, theme, storage failure UI
-  components/          # shared UI and explicit placeholders
-  db/                  # typed schema v1 and theme preferences
-  features/
-    dashboard/
-    habits/
-    training/
-    nutrition/
-    settings/
-  i18n/                # Chinese copy and future humor interface
-  lib/                 # theme resolution and action feedback
-  styles/              # theme tokens and responsive layout
-  main.tsx
-tests/
-  unit/                # foundation regression tests
-  e2e/                 # navigation, themes, privacy smoke
-scripts/e2e.mjs
-```
+No backend, accounts, analytics, ads, telemetry, personal-data requests or sensitive console logging. Local storage is not encryption; clearing the browser may erase records. Backup/import, Nutrition business logic and offline PWA startup remain out of scope. No automatic merge, deployment or Release.
 
-## Scope and privacy
-
-No login, cloud, telemetry or advertising SDK. Local storage is not encryption; clearing browser data may erase preferences. The app does not infer health, nutrition or training conclusions from private habits. Self-management only; not medical advice.
-
-Phase 1 record CRUD, statistics, training writes and nutrition calculations remain pending. Templates, backup/import, offline app-shell caching, deployment and releases are outside this PR. See [architecture](docs/ARCHITECTURE.md), [privacy](docs/PRIVACY.md) and [development plan](JERKLOG_CODEX_PLAN.md).
-
-Native TypeScript config loading avoids esbuild config-bundling restrictions on this Windows sandbox. Dev dependency prebundling may still require an approved run outside that sandbox; ordinary local terminals can run `npm run dev` directly. This host's Kaspersky injects a script into HTTP responses; isolated browser tests abort that identified injection host and reject all other unexpected application requests. No antivirus settings are modified.
-
-MIT; the existing main-branch LICENSE is retained.
+This host's Kaspersky HTTP injection is blocked only inside isolated browser tests; system security controls remain enabled. Windows dev prebundling may require approved execution outside the sandbox. Physical mobile devices, Safari, PWA offline behavior and large-history performance are unverified. MIT; existing LICENSE retained.

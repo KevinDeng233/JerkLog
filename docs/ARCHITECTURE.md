@@ -1,13 +1,31 @@
-# Phase 0 architecture
+# Architecture / Phase 1B
 
-React shell and HashRouter live in `src/app`; each of the five pages has a separate feature folder. Common headings, metrics and explicit module placeholders are shared components. CSS variables provide default dark, light and system themes; no remote fonts or assets are required.
+The existing React/TypeScript/Vite shell, HashRouter, UI tokens, theme settings, useAction feedback, safe errors and local-calendar utilities are reused. Habits business logic is unchanged from Phase 1A. Nutrition is unchanged and remains a placeholder. Training owns catalog, metrics, read queries, a transactional repository and separate exercises/plans/sessions UI folders. No new framework or runtime dependency was added.
 
-Dexie schema v1 declares habitEntries, workoutPlans, exercises, workoutSessions, workoutSets, foods, mealEntries, nutritionGoals and settings. UUID and timestamp contracts are typed in models.ts. Domain stores remain empty in a new installation. Phase 0 only reads/writes theme preferences; humorMode is reserved for later work. No domain CRUD, statistics or nutrition calculations are present.
+## Schema v3
 
-Schema migration policy: append a new version and transactional .upgrade() when persisted data changes; never rewrite an existing schema or clear browser data to resolve failures. The existing Phase 1 branch uses the same v1 schema, so opening this foundation must not wipe its data. Tests verify preference updates preserve pre-existing records and extension fields.
+Versions 1 and 2 remain intact. Version 3 adds planDays (`id`, `planId`, compound planId/order) and trainingMeta (`id`); extends exercise, plan and session indexes; and adds explicit training creation/update timestamps and revisions. No Habits, habitState, settings or Nutrition table is written by the upgrade. Dexie executes the upgrade atomically; failure leaves the old version and data intact. Tests use an actual populated v2 database and a deliberately failed migration.
 
-Preferences are written transactionally. The UI updates optimistically and reverts on storage failure, while an error boundary handles unavailable IndexedDB. System preference changes are observed through matchMedia. Route changes focus main content; the skip link focuses main without altering the hash route.
+Legacy plan day strings are preserved as named, initially empty rest days: the old schema contained no exercise scheduling detail, so users can edit them into training days rather than inventing old programming. Legacy session/set names are captured from the currently available legacy catalog/plan; unavailable names are explicitly marked. Old sessions with endedAt become completed, those without become paused. Old numeric kg values (including 0) remain numeric weighted sets because their original intent cannot be inferred. Missing exercise/set timestamps use an internal epoch sentinel and are not presented as measured workout dates. Old completed-session duration reflects its available start/end; missing historical pauses cannot be reconstructed. These rules preserve existing facts without claiming unrecorded history.
 
-Vitest covers real storage boundaries through fake-indexeddb and pure theme resolution. Browser smoke verifies all five routes, disabled business actions, theme persistence/system changes, layout width, keyboard focus, empty domain stores and no unexpected application requests. All fixtures are synthetic and isolated.
+The public exercise catalog has stable builtin IDs and an idempotent catalogVersion marker. Seeding runs when entering Training and never creates private workout records. Existing same-ID data is not overwritten.
 
-GitHub Actions uses pinned checkout/setup-node action SHAs, read-only contents permission, Node 22.18.0 and npm ci. Every lint/typecheck/test/build step must pass; no continue-on-error, skipped tests, deployment credentials or publish step is configured. Browser smoke is optional locally and is not claimed as part of this basic CI.
+## Plans and snapshots
+
+WorkoutPlan retains ordered day IDs, name, goal and archive flag. PlanDay holds an ordered array of planned exercise IDs, sets, rep range and notes, and is either training or rest. Templates are independent drafts copied before save; duplicated plans get new plan/day/exercise-row IDs. Deleting plans cascades only to their current planDays. Referenced custom exercises must be removed from plans before catalog deletion; history is rendered from snapshots.
+
+Starting a session captures plan/day names and planned exercise names/targets/notes. Ad-hoc exercises are snapshotted when first logged. Each set also retains its exercise name. Editing or deleting a source plan/exercise cannot rewrite already started/completed session context.
+
+## Session transitions and writes
+
+A session is active, paused or completed. Activity intervals persist start/end instants and exclude pauses from effective duration. New sessions require no other unfinished session. Empty sessions can be abandoned; at least one completed set is required to finish. Completed sessions are read-only in the current UI.
+
+Repository writes run read-write transactions over Training tables only. Numeric and text validation precede persistence. Revision checks reject stale edits, deletes and state transitions. Stable set IDs and a persisted 1500ms identical-set signature guard reject accidental duplicates; rapid plan copies have a similar guard. Failed control writes roll back their set/session changes. Multi-connection tests verify start/dedup serialization.
+
+The UI accepts kg with up to three decimals, storing kg and integer grams. Weighted volume sums integer grams × integer repetitions then divides by 1000; bodyweight/loadless loads are null and excluded. There is no pounds conversion or guessed body mass. Volume is descriptive only. RPE and RIR are optional and mutually exclusive.
+
+## Reading and dates
+
+Training read queries are separated and schema-index tested. Read/seed failures show usable errors instead of fabricated empty success. Weekly counts use completion timestamps from local Monday midnight through now; display uses local dates but persistence uses UTC instants. Existing clock/focus refresh behavior is reused. No Habits data enters Training calculations.
+
+Plan/history screens paginate or scroll where appropriate; current implementation loads local collections for aggregation and has not been performance-qualified for large histories. Browser tests cover the task's full acceptance flow in desktop and mobile viewports, both themes/copy modes, private request assertions and a Habits regression. System security tools are not disabled.

@@ -10,12 +10,15 @@ afterEach(async () => {
   await database.delete();
 });
 describe('Phase 0 database foundation', () => {
-  it('opens schema v1 with empty domain stores and no seeded personal data', async () => {
+  it('opens schema v3 with empty domain stores and no seeded personal data', async () => {
     await database.open();
-    expect(database.verno).toBe(1);
+    expect(database.verno).toBe(3);
     expect(database.tables.map((table) => table.name).sort()).toEqual(
       [
         'habitEntries',
+        'habitState',
+        'planDays',
+        'trainingMeta',
         'workoutPlans',
         'exercises',
         'workoutSessions',

@@ -1,4 +1,9 @@
 export const copy = {
+  trainingIntro: {
+    professional:
+      '记录动作、日程与实际完成的训练。热身、休息，按自身能力调整。',
+    humor: '今天的铁也有日志：认真记录，按自己的节奏来。',
+  },
   navigation: [
     { to: '/', label: '总览', english: 'Dashboard', icon: '◫' },
     { to: '/habits', label: '习惯', english: 'Habits', icon: '◷' },
