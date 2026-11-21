@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-test('five scaffold pages, responsive navigation, persistent theme and no business writes', async ({
+test('five pages, responsive navigation, persistent theme and no business writes during navigation', async ({
   page,
 }) => {
   const injectedHost = 'gc.kis.v2.scr.kaspersky-labs.com';
@@ -39,9 +39,9 @@ test('five scaffold pages, responsive navigation, persistent theme and no busine
       .getByRole('link', { name: new RegExp(name) })
       .click();
     await expect(page.getByRole('heading', { name: heading })).toBeVisible();
-    await expect(
-      page.getByRole('button', { name: action, exact: true }),
-    ).toBeDisabled();
+    await expect(page.getByRole('button', { name: action, exact: true }))[
+      name === '习惯' ? 'toBeEnabled' : 'toBeDisabled'
+    ]();
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

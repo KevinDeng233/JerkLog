@@ -649,3 +649,151 @@ hr {
     scroll-behavior: auto !important;
   }
 }
+
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 24px;
+  z-index: 30;
+  max-width: min(440px, calc(100vw - 40px));
+  background: var(--surface-2);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  padding: 16px 22px;
+  box-shadow: 0 12px 36px #0005;
+}
+.trend-card {
+  margin: 24px 0;
+}
+.trend {
+  display: flex;
+  height: 140px;
+  gap: 4px;
+  align-items: stretch;
+  border-bottom: 1px solid var(--border);
+}
+.trend-column {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  min-width: 0;
+}
+.trend-bar {
+  width: 100%;
+  min-height: 1px;
+  background: var(--accent);
+  border-radius: 4px 4px 0 0;
+}
+.trend-table {
+  max-height: 280px;
+  overflow: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+summary {
+  cursor: pointer;
+  margin: 12px 0;
+}
+.calendar-card {
+  margin-top: 24px;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+.weekday {
+  text-align: center;
+  color: var(--muted);
+}
+.calendar-day {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 66px;
+  padding: 6px;
+}
+.calendar-day small {
+  font-size: 0.8rem;
+}
+.calendar-day[aria-pressed='true'] {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+.calendar-day[aria-current='date'] span {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.heat-1 {
+  background: var(--accent-soft);
+}
+.heat-2 {
+  background: var(--accent);
+  color: white;
+}
+.heat-3 {
+  background: var(--lavender);
+  color: var(--bg);
+}
+.day-title {
+  margin: 24px 0 0;
+}
+.pagination {
+  margin-top: 16px;
+  font-size: 0.8rem;
+}
+.dashboard-history {
+  margin-top: 24px;
+}
+.pending-modules {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 24px 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.compact-hero .hero-art {
+  min-height: 180px;
+  max-height: 230px;
+}
+@media (max-width: 640px) {
+  .toast {
+    bottom: calc(90px + env(safe-area-inset-bottom));
+    right: 18px;
+  }
+  .calendar-grid {
+    gap: 4px;
+  }
+  .calendar-day {
+    min-height: 56px;
+    font-size: 0.85rem;
+  }
+  .calendar-day small {
+    font-size: 0.7rem;
+  }
+}
+
+.toast-dismiss {
+  margin-left: 12px;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+}
+
+.quick-record {
+  margin-bottom: 24px;
+}
+.quick-record h2 {
+  margin-bottom: 6px;
+}
+.quick-record .primary {
+  max-width: 440px;
+}
