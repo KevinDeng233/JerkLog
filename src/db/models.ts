@@ -73,3 +73,9 @@ export interface Settings {
   humorMode: boolean;
   goal?: number;
 }
+
+export interface HabitState {
+  id: 'control';
+  lastQuickAt?: number;
+  undo?: { before?: HabitEntry; after?: HabitEntry };
+}
