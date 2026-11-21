@@ -1,13 +1,23 @@
-# Phase 0 architecture
+# Architecture / Phase 1A
 
-React shell and HashRouter live in `src/app`; each of the five pages has a separate feature folder. Common headings, metrics and explicit module placeholders are shared components. CSS variables provide default dark, light and system themes; no remote fonts or assets are required.
+The five-route shell, CSS tokens, mobile navigation and schema v1 are inherited from Phase 0. Training and Nutrition files remain unchanged placeholders. Habits now owns repository writes, live-query reading, history pagination, calendar and insights components. Dashboard shares read-only insights/history; all totals come from actual records.
 
-Dexie schema v1 declares habitEntries, workoutPlans, exercises, workoutSessions, workoutSets, foods, mealEntries, nutritionGoals and settings. UUID and timestamp contracts are typed in models.ts. Domain stores remain empty in a new installation. Phase 0 only reads/writes theme preferences; humorMode is reserved for later work. No domain CRUD, statistics or nutrition calculations are present.
+## Persistence and concurrency
 
-Schema migration policy: append a new version and transactional .upgrade() when persisted data changes; never rewrite an existing schema or clear browser data to resolve failures. The existing Phase 1 branch uses the same v1 schema, so opening this foundation must not wipe its data. Tests verify preference updates preserve pre-existing records and extension fields.
+Schema v2 extends v1 with the habitEntries.createdAt index and a habitState store. The control row holds the last quick-record timestamp and one undo command containing before/after record snapshots. No records are seeded or cleared. Tests open a genuine v1 database and verify its migration. Future migrations must append versions and test preservation; old schema code cannot downgrade a v2 database.
 
-Preferences are written transactionally. The UI updates optimistically and reverts on storage failure, while an error boundary handles unavailable IndexedDB. System preference changes are observed through matchMedia. Route changes focus main content; the skip link focuses main without altering the hash route.
+All writes include habitEntries and habitState in one read-write transaction, so a failed undo-journal write also rolls back the record. Quick adds are serialized across database connections and persist their 1500ms guard. Backfill dedup compares the exact event timestamp among entries created in that interval. Manual entries with different occurrence times remain independent.
 
-Vitest covers real storage boundaries through fake-indexeddb and pure theme resolution. Browser smoke verifies all five routes, disabled business actions, theme persistence/system changes, layout width, keyboard focus, empty domain stores and no unexpected application requests. All fixtures are synthetic and isolated.
+Edit/delete compare the displayed record with the current stored version. Undo compares both the expected journal and current record before restoring or removing it. The journal survives page navigation/reload and only the latest create/edit/delete is reversible. Undo consumes the command, with no redo. Deleting a record therefore retains its before-snapshot locally until undo or a subsequent write replaces that command.
 
-GitHub Actions uses pinned checkout/setup-node action SHAs, read-only contents permission, Node 22.18.0 and npm ci. Every lint/typecheck/test/build step must pass; no continue-on-error, skipped tests, deployment credentials or publish step is configured. Browser smoke is optional locally and is not claimed as part of this basic CI.
+## Dates and presentation
+
+Events are canonical UTC ISO timestamps; local day keys are computed at display time. Week boundaries start Monday; 7/30-day windows include today and the preceding 6/29 local dates, excluding future events. Date setters handle DST and year/month rollover. Input validation round-trips local fields to reject normalized invalid dates and nonexistent DST times; repeated hours have earlier/later selection. Unchanged edits preserve the original timestamp precision.
+
+A timer and focus/visibility events refresh date-sensitive displays. History shows 20 records per page. Trend has an accessible table and calendar buttons include date/count text and selected/current-day states. Empty/loading/read-failure states are distinct. All records are currently loaded for local aggregation; large-history performance has not been qualified.
+
+## Shared infrastructure
+
+UserError contains only fixed, reviewed validation messages; safeMessage hides other exception text. useAction provides synchronous in-flight locking, busy state, success/error feedback and dismissible Toasts. Theme/humor preferences use transactional updates. These primitives, date utilities, schema migration patterns and CI can support later modules without sharing habit-derived health calculations.
+
+Unit tests cover real fake-indexeddb transactions and migration, concurrent connections, stale writes/undo, failures and local-calendar edges. Existing Phase 0 tests remain as regressions with schema/UI expectations updated for the new behavior. Browser tests cover real Chrome desktop/mobile interactions, private-data request guards, failure injection and live midnight/month rollover. CI runs the required four quality checks with read-only permissions, without deployment.

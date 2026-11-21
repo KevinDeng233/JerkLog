@@ -1,12 +1,12 @@
 # JerkLog
 
-Habits · Training · Nutrition. A privacy-first, local-first app for adults.
+Habits · Training · Nutrition. Privacy-first, browser-local self-management for adults.
 
-**Phase 0: project foundation only.** Business recording features are not implemented in this branch. [简体中文](README.zh-CN.md)
+**Phase 1A implements Habits only. Training and Nutrition remain placeholders.** [简体中文](README.zh-CN.md)
 
-## Development
+## Run and verify
 
-Use Node.js >=22.18 and npm (CI uses Node 22.18.0).
+Node.js >=22.18 and npm; CI uses Node 22.18.0.
 
 ```sh
 npm ci
@@ -18,44 +18,20 @@ npm run build
 npm run preview
 ```
 
-Optional browser verification requires installed Google Chrome; run `npm run build` then `npm run test:e2e`. The wrapper owns a local Vite preview and tests desktop/mobile viewports. This is not physical mobile or Safari verification.
+After building, `npm run test:e2e` uses installed Google Chrome with desktop/mobile viewports and owns a local production preview on port 4173. Use a consistent browser and origin for your own data.
 
-## Included
+## Habits
 
-React + strict TypeScript + Vite, five HashRouter pages, desktop sidebar/mobile navigation, dark/light/system themes, CSS tokens, a Chinese copy catalog and humor-mode extension field. The three domain pages show explicit placeholders with disabled actions. Dashboard statistics use an em dash, not fabricated numbers. Only theme preferences are written to IndexedDB.
+Record now with a transactional 1.5-second accidental-double-click guard, backfill history, edit occurrence time, confirm deletion and undo the last create/edit/delete. Undo survives refresh; it rejects stale or conflicting changes rather than overwriting another tab. Identical backfill times also have a 1.5-second duplicate-submit guard.
 
-Dexie schema v1 declares the nine planned stores without seeding personal data. Existing records are never cleared. Vitest tests schema initialization, preference persistence/rollback and theme resolution. GitHub Actions runs clean installation, lint, typecheck, tests and build with read-only permissions; it does not deploy or publish.
+Dashboard and Habits derive today, Monday-based week, inclusive 7/30 local-calendar-day totals, latest occurrence, a 30-day trend/table and paged history from actual IndexedDB records. A monthly heatmap displays daily counts and filters records by selected date. No demo entries, health scores or habit-to-nutrition/training inference.
 
-## Structure
+Themes and optional humorous copy affect presentation only. Writes provide dismissible Toast feedback, synchronous submission locking and sanitized errors. Loading/read errors are not rendered as zero statistics. New York unit fixtures cover DST; Shanghai browser fixtures cover CRUD and local midnight/month transitions. Nonexistent local times are rejected, and repeated DST hours support earlier/later selection.
 
-```text
-.github/workflows/ci.yml
-src/
-  app/                 # shell, routes, theme, storage failure UI
-  components/          # shared UI and explicit placeholders
-  db/                  # typed schema v1 and theme preferences
-  features/
-    dashboard/
-    habits/
-    training/
-    nutrition/
-    settings/
-  i18n/                # Chinese copy and future humor interface
-  lib/                 # theme resolution and action feedback
-  styles/              # theme tokens and responsive layout
-  main.tsx
-tests/
-  unit/                # foundation regression tests
-  e2e/                 # navigation, themes, privacy smoke
-scripts/e2e.mjs
-```
+## Data and scope
 
-## Scope and privacy
+Dexie schema v2 adds a createdAt index and a local habitState store for cooldown and the single undo operation. Version 1 records/settings are retained and migration-tested. No cloud, login, tracking, advertising SDK, private-data requests or sensitive console logging. Local storage is not encryption; clearing it can erase all records. Backup and offline cold startup are not implemented.
 
-No login, cloud, telemetry or advertising SDK. Local storage is not encryption; clearing browser data may erase preferences. The app does not infer health, nutrition or training conclusions from private habits. Self-management only; not medical advice.
+No automatic merge, deployment, Release, Training or Nutrition business implementation. See [architecture](docs/ARCHITECTURE.md), [privacy](docs/PRIVACY.md), [development plan](JERKLOG_CODEX_PLAN.md), and the Chinese README for detailed date/undo rules and reusable infrastructure.
 
-Phase 1 record CRUD, statistics, training writes and nutrition calculations remain pending. Templates, backup/import, offline app-shell caching, deployment and releases are outside this PR. See [architecture](docs/ARCHITECTURE.md), [privacy](docs/PRIVACY.md) and [development plan](JERKLOG_CODEX_PLAN.md).
-
-Native TypeScript config loading avoids esbuild config-bundling restrictions on this Windows sandbox. Dev dependency prebundling may still require an approved run outside that sandbox; ordinary local terminals can run `npm run dev` directly. This host's Kaspersky injects a script into HTTP responses; isolated browser tests abort that identified injection host and reject all other unexpected application requests. No antivirus settings are modified.
-
-MIT; the existing main-branch LICENSE is retained.
+This Windows sandbox may require approved execution outside the sandbox for dev dependency prebundling; native TypeScript config loading is enabled. The host's Kaspersky HTTP injection is blocked only inside isolated browser test contexts; all other unexpected application requests fail the privacy assertion. System antivirus settings are untouched. Physical mobile devices, Safari, offline cold startup and large-history performance are not verified. MIT; existing LICENSE retained.

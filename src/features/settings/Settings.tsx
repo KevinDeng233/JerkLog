@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, defaultSettings } from '../../db/database';
-import { saveTheme } from '../../db/preferences';
+import { saveHumor, saveTheme } from '../../db/preferences';
 import type { Settings } from '../../db/models';
 import { useAction } from '../../lib/useAction';
 import { PageHeading } from '../../components/Shared';
@@ -11,6 +11,7 @@ export default function SettingsPage() {
   );
   const [pending, setPending] = useState<Settings['theme']>();
   const action = useAction();
+  const [humor, setHumor] = useState<boolean>();
   function update(theme: Settings['theme']) {
     const previous = pending;
     setPending(theme);
@@ -45,21 +46,37 @@ export default function SettingsPage() {
           {action.feedback}
           <hr />
           <h3>文案模式</h3>
-          <span className="tag">当前为专业文案</span>
-          <p className="muted">
-            已为整活模式预留设置字段与文案接口，切换功能将在后续阶段开放。
-          </p>
+          <label className="toggle">
+            <span>
+              整活文案
+              <span className="muted block">
+                只改变展示文案，不影响记录或统计。
+              </span>
+            </span>
+            <input
+              type="checkbox"
+              checked={humor ?? persisted?.humorMode ?? false}
+              disabled={action.busy || !persisted}
+              onChange={(event) => {
+                const next = event.target.checked;
+                const previous = humor;
+                setHumor(next);
+                void action
+                  .run(() => saveHumor(next), '文案模式已保存。')
+                  .then((ok) => {
+                    if (!ok) setHumor(previous);
+                  });
+              }}
+            />
+          </label>
         </section>
         <section className="card">
           <span className="tag">仅本地存储</span>
           <h2>隐私，默认在本机。</h2>
-          <p>
-            Phase 0
-            仅保存主题偏好，不采集或保存个人业务记录。数据库基础架构已就绪。
-          </p>
+          <p>习惯记录与偏好仅保存在当前浏览器 IndexedDB。没有后台同步。</p>
           <p className="muted">
             无需账号，没有后台同步，不接入广告、分析或错误上报
-            SDK。本地存储不等于加密；清除浏览器数据可能导致偏好丢失。
+            SDK。本地存储不等于加密；清除浏览器数据可能导致所有记录丢失；备份功能尚未提供。
           </p>
           <hr />
           <p className="muted">
@@ -67,7 +84,7 @@ export default function SettingsPage() {
           </p>
         </section>
       </div>
-      <p className="muted version">JerkLog · v0.1 / Phase 0 · 项目基础架构</p>
+      <p className="muted version">JerkLog · v0.1 / Phase 1A · Habits</p>
     </>
   );
 }
