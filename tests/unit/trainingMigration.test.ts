@@ -72,11 +72,11 @@ it('upgrades v2 training data while exactly preserving Habits, undo state, setti
   const upgraded = new JerkLogDB(name);
   try {
     await upgraded.open();
-    expect(upgraded.verno).toBe(3);
+    expect(upgraded.verno).toBe(4);
     expect(await upgraded.habitEntries.toArray()).toEqual([habit]);
     expect(await upgraded.habitState.get('control')).toEqual(control);
     expect(await upgraded.settings.get('default')).toEqual(settings);
-    expect(await upgraded.foods.get('food-fixture')).toEqual(food);
+    expect(await upgraded.foods.get('food-fixture')).toMatchObject(food);
     const set = (await upgraded.workoutSets.get('old-set'))!;
     expect(set.weightKg).toBe(20.5);
     expect(set.weightGrams).toBe(20500);

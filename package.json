@@ -1,7 +1,7 @@
 {
   "name": "jerklog",
   "private": true,
-  "version": "0.1.0-phase1b",
+  "version": "0.1.0-phase1c",
   "type": "module",
   "engines": {
     "node": ">=22.18.0"

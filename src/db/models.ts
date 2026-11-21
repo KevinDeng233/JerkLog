@@ -88,37 +88,84 @@ export interface TrainingMeta {
   lastSetSignature?: string;
 }
 export interface Nutrition {
-  kcal: number;
-  proteinG: number;
-  carbsG: number;
-  fatG: number;
+  kcal: number | null;
+  proteinG: number | null;
+  carbsG: number | null;
+  fatG: number | null;
+}
+export interface FoodSource {
+  kind: 'usda' | 'label' | 'user';
+  reference?: string;
+  revision?: string;
+  dataset?: string;
+  fdcId?: number;
+  ndbNumber?: number;
+  description?: string;
+  verifiedAt?: string;
+  license?: string;
 }
 export interface Food {
   id: string;
   name: string;
-  kcalPer100g: number;
-  proteinPer100g: number;
-  carbsPer100g: number;
-  fatPer100g: number;
-  source: string;
+  brand?: string;
   state: 'raw' | 'cooked' | 'unspecified';
+  per100g: Nutrition;
+  source: FoodSource;
+  servingGrams?: number;
+  isBuiltIn: boolean;
+  archived: boolean;
+  createdAt: string;
+  updatedAt: string;
+  revision: number;
 }
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 export interface MealEntry {
   id: string;
-  foodId: string;
-  foodName: string;
-  date: string;
+  foodId?: string;
+  localDate: string;
   mealType: MealType;
   grams: number;
-  nutritionSnapshot: Nutrition;
+  nutritionSnapshot: {
+    foodName: string;
+    brand?: string;
+    state: Food['state'];
+    per100g: Nutrition;
+    source: FoodSource;
+    servingGrams?: number;
+  };
+  createdAt: string;
+  updatedAt: string;
+  revision: number;
 }
-export interface NutritionGoals {
+export interface NutritionGoals extends Nutrition {
   id: 'default';
-  kcal?: number;
-  proteinG?: number;
-  carbsG?: number;
-  fatG?: number;
+  updatedAt: string;
+  revision: number;
+}
+export type DietaryRestriction =
+  | 'milk'
+  | 'egg'
+  | 'soy'
+  | 'gluten'
+  | 'peanut'
+  | 'nuts'
+  | 'fish'
+  | 'shellfish';
+export interface NutritionPreferences {
+  id: 'default';
+  goal: 'balanced' | 'muscle' | null;
+  diet: 'omnivore' | 'vegetarian' | 'vegan';
+  restrictions: DietaryRestriction[];
+  otherRestrictions: string;
+  dismissedDate?: string;
+  updatedAt: string;
+  revision: number;
+}
+export interface NutritionMeta {
+  id: 'control';
+  catalogVersion?: number;
+  lastMealAt?: number;
+  lastMealSignature?: string;
 }
 export interface Settings {
   id: 'default';

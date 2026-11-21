@@ -1,6 +1,26 @@
-# Architecture / Phase 1B
+# Architecture / Phase 1C
 
-The existing React/TypeScript/Vite shell, HashRouter, UI tokens, theme settings, useAction feedback, safe errors and local-calendar utilities are reused. Habits business logic is unchanged from Phase 1A. Nutrition is unchanged and remains a placeholder. Training owns catalog, metrics, read queries, a transactional repository and separate exercises/plans/sessions UI folders. No new framework or runtime dependency was added.
+The existing React/TypeScript/Vite shell, HashRouter, UI tokens, theme settings, useAction feedback, safe errors and local-calendar utilities are reused. Habits and Training business logic is unchanged in Phase 1C. Nutrition owns pure calculators, a transactional repository, indexed reads, foods/diary/goals/recommendations folders and reactive views. No framework or runtime dependency was added.
+
+## Nutrition schema v4 and preservation
+
+Version 4 retains every prior store and the v1/v2/v3 definitions. It adds nutritionMeta and nutritionPreferences; foods indexes name/state, and mealEntries indexes localDate, mealType, foodId, createdAt and localDate/mealType. The old date index remains for legacy compatibility. The upgrade writes only foods, mealEntries and nutritionGoals. It never resets/deletes a database or writes Habits, habitState, Training or Settings. Real populated-v3 tests compare all those unrelated records exactly, then verify they remain unchanged after catalog initialization; an injected upgrade error proves rollback to the original v3 records/version.
+
+Legacy scalar food nutrients become per100g; absent values stay null. String provenance is retained as legacySource and displayed as user/legacy provenance. Legacy meal snapshots held consumed nutrients, so they are converted to per100g using the original recorded grams, not today's food library. Original snapshot/fields remain retained for inspection. Unknown preparation/source remain explicit, and unavailable timestamps use an internal epoch sentinel rather than an invented meal time. The stored local date is preserved without UTC conversion; absent/invalid old dates remain reachable in a repair list. Missing goal fields become null.
+
+The compact public catalog has stable FDC IDs and a version marker, initializes only on Nutrition entry, adds no private meals/goals/preferences, and never overwrites existing same-ID foods. Built-ins remain immutable. Source rows and reuse terms are documented in FOOD_SOURCES.md.
+
+## Nutrition writes, calculations and dates
+
+NutritionRepository owns write transactions over its five stores only. Revision checks reject stale food/meal/goal/preference edits. Stable meal IDs and a persisted 1500ms same-content signature serialize accidental duplicate writes across connections; failure rolls back entry/control changes together. History snapshots include name/state/per100g/provenance and optional brand/serving metadata. Editing grams/date/meal category changes the record while retaining its original food snapshot; food deletion never cascades to diary history.
+
+All nutrients are number or null. Per100g × grams/100 is calculated independently for each field, preserving label kcal even when it differs from 4/4/9. Numeric bounds/precision and finite checks run before persistence; aggregation tracks known subtotal and missing entry count without per-entry rounding. Unknown totals and partial progress are visibly distinguished. Goals are independently optional and never inferred from zero or absent values.
+
+Explicit Gregorian localDate is the diary grouping key; UTC createdAt is an audit timestamp. Calendar validation uses date components, including leap years, without interpreting dates as UTC instants. The date picker defaults to local today using the existing clock hook; an explicitly chosen day stays chosen across refresh/date changes within that view. No diary day is derived from slicing an ISO timestamp.
+
+Read/seed failures show safe errors instead of invented counters. Reactive reads recalculate from persisted records. Recommendation rules read only explicit Nutrition preferences, selected-day known totals and goals, never Habits or Training. Adult estimation is pure, opt-in and transient; only an explicit draft application followed by save changes goals.
+
+The existing project does not configure a service worker. Already-loaded page offline navigation/reading is verified; offline cold startup, backup/import, real Safari/device behavior and large-history performance remain outside the verified scope. Test data is synthetic. Kaspersky injection is blocked only within isolated Playwright contexts; system protection remains enabled.
 
 ## Schema v3
 

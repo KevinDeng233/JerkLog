@@ -1,0 +1,164 @@
+[
+  {
+    "id": "usda:168878",
+    "name": "白米饭（强化长粒米）",
+    "state": "cooked",
+    "per100g": {
+      "kcal": 130.0,
+      "proteinG": 2.69,
+      "carbsG": 28.17,
+      "fatG": 0.28
+    },
+    "source": {
+      "kind": "usda",
+      "reference": "https://fdc.nal.usda.gov/food-details/168878/nutrients",
+      "dataset": "SR Legacy",
+      "fdcId": 168878,
+      "ndbNumber": 20045,
+      "description": "Rice, white, long-grain, regular, enriched, cooked",
+      "revision": "2019-04-01",
+      "verifiedAt": "2026-11-21",
+      "license": "CC0-1.0"
+    },
+    "isBuiltIn": true,
+    "archived": false,
+    "createdAt": "2019-04-01T00:00:00.000Z",
+    "updatedAt": "2019-04-01T00:00:00.000Z",
+    "revision": 0
+  },
+  {
+    "id": "usda:171287",
+    "name": "全鸡蛋（去壳）",
+    "state": "raw",
+    "per100g": {
+      "kcal": 143.0,
+      "proteinG": 12.56,
+      "carbsG": 0.72,
+      "fatG": 9.51
+    },
+    "source": {
+      "kind": "usda",
+      "reference": "https://fdc.nal.usda.gov/food-details/171287/nutrients",
+      "dataset": "SR Legacy",
+      "fdcId": 171287,
+      "ndbNumber": 1123,
+      "description": "Egg, whole, raw, fresh",
+      "revision": "2019-04-01",
+      "verifiedAt": "2026-11-21",
+      "license": "CC0-1.0"
+    },
+    "isBuiltIn": true,
+    "archived": false,
+    "createdAt": "2019-04-01T00:00:00.000Z",
+    "updatedAt": "2019-04-01T00:00:00.000Z",
+    "revision": 0
+  },
+  {
+    "id": "usda:171265",
+    "name": "全脂牛奶（3.25%脂肪，添加维D）",
+    "state": "unspecified",
+    "per100g": {
+      "kcal": 61.0,
+      "proteinG": 3.15,
+      "carbsG": 4.8,
+      "fatG": 3.25
+    },
+    "source": {
+      "kind": "usda",
+      "reference": "https://fdc.nal.usda.gov/food-details/171265/nutrients",
+      "dataset": "SR Legacy",
+      "fdcId": 171265,
+      "ndbNumber": 1077,
+      "description": "Milk, whole, 3.25% milkfat, with added vitamin D",
+      "revision": "2019-04-01",
+      "verifiedAt": "2026-11-21",
+      "license": "CC0-1.0"
+    },
+    "isBuiltIn": true,
+    "archived": false,
+    "createdAt": "2019-04-01T00:00:00.000Z",
+    "updatedAt": "2019-04-01T00:00:00.000Z",
+    "revision": 0
+  },
+  {
+    "id": "usda:171077",
+    "name": "去皮去骨鸡胸肉",
+    "state": "raw",
+    "per100g": {
+      "kcal": 120.0,
+      "proteinG": 22.5,
+      "carbsG": 0.0,
+      "fatG": 2.62
+    },
+    "source": {
+      "kind": "usda",
+      "reference": "https://fdc.nal.usda.gov/food-details/171077/nutrients",
+      "dataset": "SR Legacy",
+      "fdcId": 171077,
+      "ndbNumber": 5062,
+      "description": "Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw",
+      "revision": "2019-04-01",
+      "verifiedAt": "2026-11-21",
+      "license": "CC0-1.0"
+    },
+    "isBuiltIn": true,
+    "archived": false,
+    "createdAt": "2019-04-01T00:00:00.000Z",
+    "updatedAt": "2019-04-01T00:00:00.000Z",
+    "revision": 0
+  },
+  {
+    "id": "usda:172475",
+    "name": "硬豆腐（硫酸钙凝固）",
+    "state": "raw",
+    "per100g": {
+      "kcal": 144.0,
+      "proteinG": 17.27,
+      "carbsG": 2.78,
+      "fatG": 8.72
+    },
+    "source": {
+      "kind": "usda",
+      "reference": "https://fdc.nal.usda.gov/food-details/172475/nutrients",
+      "dataset": "SR Legacy",
+      "fdcId": 172475,
+      "ndbNumber": 16426,
+      "description": "Tofu, raw, firm, prepared with calcium sulfate",
+      "revision": "2019-04-01",
+      "verifiedAt": "2026-11-21",
+      "license": "CC0-1.0"
+    },
+    "isBuiltIn": true,
+    "archived": false,
+    "createdAt": "2019-04-01T00:00:00.000Z",
+    "updatedAt": "2019-04-01T00:00:00.000Z",
+    "revision": 0
+  },
+  {
+    "id": "usda:169705",
+    "name": "燕麦谷粒（未烹调）",
+    "state": "raw",
+    "per100g": {
+      "kcal": 389.0,
+      "proteinG": 16.89,
+      "carbsG": 66.27,
+      "fatG": 6.9
+    },
+    "source": {
+      "kind": "usda",
+      "reference": "https://fdc.nal.usda.gov/food-details/169705/nutrients",
+      "dataset": "SR Legacy",
+      "fdcId": 169705,
+      "ndbNumber": 20038,
+      "description": "Oats (Includes foods for USDA's Food Distribution Program)",
+      "revision": "2019-04-01",
+      "verifiedAt": "2026-11-21",
+      "license": "CC0-1.0"
+    },
+    "isBuiltIn": true,
+    "archived": false,
+    "createdAt": "2019-04-01T00:00:00.000Z",
+    "updatedAt": "2019-04-01T00:00:00.000Z",
+    "revision": 0
+  }
+]
