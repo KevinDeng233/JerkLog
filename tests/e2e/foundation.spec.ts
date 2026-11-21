@@ -40,7 +40,7 @@ test('five pages, responsive navigation, persistent theme and no business writes
       .click();
     await expect(page.getByRole('heading', { name: heading })).toBeVisible();
     await expect(page.getByRole('button', { name: action, exact: true }))[
-      name !== '饮食' ? 'toBeEnabled' : 'toBeDisabled'
+      'toBeEnabled'
     ]();
     expect(
       await page.evaluate(
@@ -77,7 +77,14 @@ test('five pages, responsive navigation, persistent theme and no business writes
       request.onerror = () => reject(request.error);
     });
     const stores = Array.from(database.objectStoreNames).filter(
-      (name) => !['settings', 'exercises', 'trainingMeta'].includes(name),
+      (name) =>
+        ![
+          'settings',
+          'exercises',
+          'trainingMeta',
+          'foods',
+          'nutritionMeta',
+        ].includes(name),
     );
     const transaction = database.transaction(stores, 'readonly');
     const counts = await Promise.all(

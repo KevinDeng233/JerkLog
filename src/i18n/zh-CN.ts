@@ -1,4 +1,8 @@
 export const copy = {
+  nutritionIntro: {
+    professional: '按实际克数与来源清晰的营养值记录，目标由你自主选择。',
+    humor: '给今天的饭写个日志，数字认真算，吃饭按自己的节奏来。',
+  },
   trainingIntro: {
     professional:
       '记录动作、日程与实际完成的训练。热身、休息，按自身能力调整。',
