@@ -797,3 +797,105 @@ summary {
 .quick-record .primary {
   max-width: 440px;
 }
+
+textarea {
+  font: inherit;
+  min-height: 88px;
+  resize: vertical;
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 10px;
+}
+.training-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 24px 0;
+}
+.training-tabs [aria-selected='true'] {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.training-start {
+  margin-bottom: 24px;
+}
+.training-start h2,
+.training-start p {
+  margin-bottom: 4px;
+}
+.plan-editor,
+.plan-list {
+  margin-top: 24px;
+}
+.plan-list {
+  display: grid;
+  gap: 20px;
+}
+.day-editor {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  margin: 20px 0;
+}
+.planned-move {
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  margin: 16px 0;
+}
+.three-fields {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.schedule-list {
+  padding-left: 24px;
+}
+.schedule-list > li {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.exercise-list {
+  max-height: 900px;
+  overflow: auto;
+}
+.exercise-list p {
+  margin-bottom: 0;
+}
+.history-session {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+}
+.history-session time {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.history-session li,
+.current-session li,
+.exercise-list strong {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 640px) {
+  .training-tabs button {
+    flex: 1 1 40%;
+    font-size: 0.85rem;
+  }
+  .three-fields {
+    gap: 8px;
+  }
+  .day-editor {
+    padding: 12px;
+  }
+  .planned-move {
+    padding: 12px;
+  }
+}
+
+.plan-list h2,
+.history-session h3,
+.schedule-list li {
+  overflow-wrap: anywhere;
+}

@@ -1,5 +1,8 @@
+import { migrateTraining } from './trainingMigration';
 import Dexie, { type EntityTable } from 'dexie';
 import type {
+  PlanDay,
+  TrainingMeta,
   HabitEntry,
   HabitState,
   WorkoutPlan,
@@ -15,6 +18,8 @@ import type {
 // Append versions with .upgrade(transaction => ...) when changing persisted data.
 // Never edit an already shipped schema or delete a database to migrate it.
 export class JerkLogDB extends Dexie {
+  planDays!: EntityTable<PlanDay, 'id'>;
+  trainingMeta!: EntityTable<TrainingMeta, 'id'>;
   habitState!: EntityTable<HabitState, 'id'>;
   habitEntries!: EntityTable<HabitEntry, 'id'>;
   workoutPlans!: EntityTable<WorkoutPlan, 'id'>;
@@ -43,6 +48,16 @@ export class JerkLogDB extends Dexie {
       habitEntries: 'id, occurredAt, createdAt',
       habitState: 'id',
     });
+    this.version(3)
+      .stores({
+        exercises: 'id, name, equipment, *muscleGroups',
+        workoutPlans: 'id, createdAt, updatedAt',
+        planDays: 'id, planId, [planId+order]',
+        workoutSessions: 'id, startedAt, endedAt, planId, status',
+        workoutSets: 'id, sessionId, exerciseId, [sessionId+order]',
+        trainingMeta: 'id',
+      })
+      .upgrade(migrateTraining);
   }
 }
 export const db = new JerkLogDB();

@@ -136,7 +136,7 @@ describe('Habits CRUD and persistent undo', () => {
     const upgraded = new JerkLogDB(name);
     try {
       await upgraded.open();
-      expect(upgraded.verno).toBe(2);
+      expect(upgraded.verno).toBe(3);
       expect(await upgraded.habitEntries.get('legacy')).toEqual(entry);
       expect((await upgraded.settings.get('default'))?.humorMode).toBe(true);
       expect(

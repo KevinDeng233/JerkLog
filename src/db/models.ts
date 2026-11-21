@@ -7,8 +7,12 @@ export interface HabitEntry {
 export interface WorkoutPlan {
   id: string;
   name: string;
+  goal?: string;
   days: string[];
+  archived: boolean;
   createdAt: string;
+  updatedAt: string;
+  revision: number;
 }
 export interface Exercise {
   id: string;
@@ -16,22 +20,72 @@ export interface Exercise {
   muscleGroups: string[];
   equipment: string;
   isCustom: boolean;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+  revision: number;
+}
+export interface PlannedExercise {
+  id: string;
+  exerciseId: string;
+  sets: number;
+  repsMin: number;
+  repsMax: number;
+  notes?: string;
+}
+export interface PlanDay {
+  id: string;
+  planId: string;
+  name: string;
+  kind: 'training' | 'rest';
+  order: number;
+  exercises: PlannedExercise[];
+  createdAt: string;
+  updatedAt: string;
+}
+export interface SessionExercise extends PlannedExercise {
+  name: string;
 }
 export interface WorkoutSession {
   id: string;
   planId?: string;
+  planName?: string;
+  dayName?: string;
   startedAt: string;
   endedAt?: string;
+  status: 'active' | 'paused' | 'completed';
+  intervals: { startedAt: string; endedAt?: string }[];
+  exercises: SessionExercise[];
   notes?: string;
+  createdAt: string;
+  updatedAt: string;
+  revision: number;
 }
 export interface WorkoutSet {
   id: string;
   sessionId: string;
   exerciseId: string;
+  exerciseName: string;
+  order: number;
   reps: number;
-  weightKg: number;
+  mode: 'weighted' | 'bodyweight' | 'loadless';
+  weightKg: number | null;
+  weightGrams: number | null;
+  rpe?: number;
   rir?: number;
+  notes?: string;
   completed: boolean;
+  createdAt: string;
+  updatedAt: string;
+  revision: number;
+}
+export interface TrainingMeta {
+  id: 'control';
+  lastCopyAt?: number;
+  lastCopySource?: string;
+  catalogVersion?: number;
+  lastSetAt?: number;
+  lastSetSignature?: string;
 }
 export interface Nutrition {
   kcal: number;
